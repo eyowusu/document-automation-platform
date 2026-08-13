@@ -65,3 +65,21 @@ skills-lock.json
 
 # Prisma 6 config (not used with Prisma 5.22.0)
 prisma.config.ts
+
+# generated Prisma client
+src/generated/prisma
+
+# build cache
+tsconfig.tsbuildinfo
+
+# shadcn/ui config
+components.json
+
+# sample data
+sample-employees.xlsx
+
+# skills lock
+skills-lock.json
+
+# environment variables
+.env
