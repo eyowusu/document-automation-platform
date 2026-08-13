@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Document Automation Platform
+
+A professional document automation platform for the Ghana School Feeding Programme (GSFP) that generates official contracts from Excel data while preserving government branding, logos, letterheads, and legal formatting.
+
+## Features
+
+- **Template Management**: Upload official Word templates (.docx) with government branding
+- **Excel Data Processing**: Parse Excel files with caterer/recipient data
+- **Document Generation**: Generate one official DOCX or PDF per spreadsheet row
+- **Placeholder Mapping**: Match spreadsheet columns to document placeholders
+- **Private Storage**: All templates and generated documents stored securely
+- **Authentication**: Database-backed sessions with login throttling
+- **Official Formatting**: Preserves logos, letterheads, tables, numbering, and signature blocks
+
+## Tech Stack
+
+- **Frontend**: Next.js 16.3.0 with Turbopack
+- **Language**: TypeScript
+- **Database**: SQLite with Prisma ORM 5.22.0
+- **Document Processing**: Docxtemplater with PizZip for DOCX rendering
+- **PDF Conversion**: LibreOffice headless mode
+- **Authentication**: Bcrypt password hashing, HttpOnly sessions
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18+
+- Python 3 (for template authoring scripts)
+- LibreOffice (for PDF conversion)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install dependencies
+npm install
+
+# Generate Prisma client
+npx prisma generate
+
+# Create database and run migrations
+npx prisma migrate dev
+
+# Create admin user
+node scripts/create-user.mjs
+
+# Seed the catering template
+node scripts/seed-catering-template.mjs
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Development
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Start development server
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The application will be available at `http://localhost:3000`
 
-## Learn More
+### Default Credentials
 
-To learn more about Next.js, take a look at the following resources:
+- **Email**: coordinator@gsfp.gov.gh
+- **Password**: GSFP@2025Secure!
+- **Role**: admin
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Usage
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Login** with your credentials
+2. **Upload Template**: Upload an official Word document (.docx)
+3. **Upload Excel**: Upload an Excel file with caterer/recipient data
+4. **Map Fields**: Match spreadsheet columns to document placeholders
+5. **Generate Documents**: Generate DOCX or PDF for each row
+6. **Download**: Download generated documents securely
 
-## Deploy on Vercel
+## Template Authoring
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+The platform uses Python scripts to author templates from official Word documents:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `scripts/build-catering-template.py` - Creates templates with placeholders
+- `scripts/add-regional-coordinator-signature.py` - Adds signature images
+
+## Security
+
+- Private file storage under `storage/` (not `public/`)
+- Authenticated download endpoints
+- Path traversal protection
+- Login throttling (5 attempts, 15-minute lockout)
+- HttpOnly session cookies
+- Bcrypt password hashing
+
+## License
+
+This project is for the Ghana School Feeding Programme, a government agency.

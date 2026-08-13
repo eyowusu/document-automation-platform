@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  password  String    // bcrypt hash
+  name      String?
+  role      String    @default("officer") // "officer" or "admin"
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  sessions  Session[]
+  contracts Contract[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique // sha256 of the cookie value, never the token itself
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model Template {
+  id          String        @id @default(cuid())
+  name        String
+  description String?
+  content     String        // Template content with placeholders like {{client_name}}
+  storagePath String?       // uploaded .docx within the private storage directory
+  placeholders String       // JSON string of placeholder names
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  contracts   Contract[]
+  excelMappings ExcelMapping[]
+}
+
+model Contract {
+  id           String   @id @default(cuid())
+  templateId   String
+  template     Template @relation(fields: [templateId], references: [id])
+  data         String   // JSON string of the data used to generate this contract
+  storagePath  String   // path within the private storage directory, never web-served
+  fileName     String   // name offered to the user on download
+  format       String   // "docx" or "pdf"
+  status       String   // "draft", "completed"
+  generatedById String?
+  generatedBy  User?    @relation(fields: [generatedById], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([templateId])
+}
+
+model ExcelMapping {
+  id          String   @id @default(cuid())
+  templateId  String
+  template    Template @relation(fields: [templateId], references: [id])
+  excelColumn String   // Column name from Excel
+  placeholder String   // Placeholder name in template
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

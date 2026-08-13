@@ -39,3 +39,29 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# generated documents and uploaded templates (contain personal data)
+/storage
+
+# database
+dev.db
+*.db
+*.db-journal
+
+# session cookies
+cookies.txt
+
+# sample data
+sample-employees.xlsx
+
+# IDE configuration
+.agents/
+.claude/
+.windsurf/
+components.json
+skills-lock.json
+
+# Prisma 6 config (not used with Prisma 5.22.0)
+prisma.config.ts
